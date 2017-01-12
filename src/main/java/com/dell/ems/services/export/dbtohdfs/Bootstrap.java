@@ -1,16 +1,19 @@
 package com.dell.ems.services.export.dbtohdfs;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.dell.ems.services.export.dbtohdfs.domain.Item;
+import com.dell.ems.services.export.dbtohdfs.domain.ItemRepository;
 import net.sf.webdav.WebdavServlet;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootApplication
 public class Bootstrap {
@@ -37,6 +40,20 @@ public class Bootstrap {
         registration.setInitParameters(params);
         registration.addUrlMappings();
         return registration;
+    }
+
+    @Bean
+    CommandLineRunner init(final ItemRepository itemRepository) {
+        return new CommandLineRunner() {
+            @Override
+            public void run(String... arg0) throws Exception {
+                Item item = new Item();
+                item.setId("1");
+                item.setPayload("Payload");
+                item.setUpdateTimestamp(new Date());
+                itemRepository.save(item);
+            }
+        };
     }
 
     public static void main(String[] args) {
