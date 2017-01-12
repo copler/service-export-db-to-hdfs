@@ -10,7 +10,5 @@ applications:
   random-route: false
   route: export-db-to-hdfs
   host: export-db-to-hdfs
-  services:
-    - mysql
   env:
     SPRING_PROFILES_ACTIVE: pcf
