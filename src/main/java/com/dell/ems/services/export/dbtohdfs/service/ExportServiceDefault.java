@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.dell.ems.services.export.dbtohdfs.domain.Item;
@@ -15,6 +16,7 @@ import com.dell.ems.services.export.dbtohdfs.domain.ItemRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
+@Profile("default")
 public class ExportServiceDefault implements ExportService {
 
     private final ObjectMapper om = new ObjectMapper();
