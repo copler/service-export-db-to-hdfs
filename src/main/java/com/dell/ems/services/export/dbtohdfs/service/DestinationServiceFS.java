@@ -27,7 +27,7 @@ public class DestinationServiceFS implements DestinationService {
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Unable to initialize output stream: " + e.getMessage());
         }
-        return new PrintWriter(fos);
+        return new PrintWriter(fos, true);
     }
 
 }
