@@ -1,7 +1,9 @@
 package com.dell.ems.services.export.dbtohdfs.service;
 
 import com.dell.ems.services.export.dbtohdfs.tloureiro.entity.Contact;
+import com.dell.ems.services.export.dbtohdfs.tloureiro.entity.Organization;
 import com.dell.ems.services.export.dbtohdfs.tloureiro.repository.ContactRepository;
+import com.dell.ems.services.export.dbtohdfs.tloureiro.repository.OrganizationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Profile;
@@ -22,7 +24,10 @@ import java.util.List;
 public class CrmExportService implements ExportService {
 
     @Inject
-    private ContactRepository repository;
+    private ContactRepository contactRepository;
+
+    @Inject
+    private OrganizationRepository organizationRepository;
 
     @Inject
     private DestinationService destinationService;
@@ -33,20 +38,36 @@ public class CrmExportService implements ExportService {
 
     @Override
     public void exportSince(Date updateTimestamp) {
+        exportContacts();
+        exportOrganizations();
+    }
+
+    private void exportContacts() {
         List<Contact> contacts = new ArrayList<>();
-        for (Contact contact : repository.findAll()) {
+        for (Contact contact : contactRepository.findAll()) {
             contacts.add(contact);
         }
-        if (contacts.isEmpty()) {
+        exportEntities(contacts, "contact");
+    }
+
+    private void exportOrganizations() {
+        List<Organization> organizations = new ArrayList<>();
+        for (Organization organization : organizationRepository.findAll()) {
+            organizations.add(organization);
+        }
+        exportEntities(organizations, "organization");
+    }
+
+    private void exportEntities(List<?> entities, String bucket) {
+        if (entities.isEmpty()) {
             return;
         }
         if (logger.isInfoEnabled()) {
-            logger.info("    found " + contacts.size() + " contacts");
+            logger.info("    found " + entities.size() + " " + bucket + "s");
         }
-        try (PrintWriter pw = destinationService.accept("contact")) {
-            for (Contact contact : contacts) {
-//                om.writeValue(pw, contact);
-                pw.append(om.writeValueAsString(contact));
+        try (PrintWriter pw = destinationService.accept(bucket)) {
+            for (Object entity : entities) {
+                pw.append(om.writeValueAsString(entity));
                 pw.println();
             }
         } catch (IOException e) {

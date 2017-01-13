@@ -23,7 +23,7 @@ public class DestinationServiceFS implements DestinationService {
         File file = new File(folder, "data");
         FileOutputStream fos;
         try {
-            fos = new FileOutputStream(file, true /* append */);
+            fos = new FileOutputStream(file, false /* append */);
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Unable to initialize output stream: " + e.getMessage());
         }
